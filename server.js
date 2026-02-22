@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import fetch from "node-fetch"; // necessário para usar fetch no Node
+import fetch from "node-fetch"; // necessário no Node
 
 const app = express();
 app.use(cors());
@@ -8,30 +8,21 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-// 👑 Usuário premium (modo teste)
+// 👑 Usuário premium fixo (você)
 let users = {
   "miqueiasluna713@gmail.com": true
 };
 
-// 💡 Adicione sua API Key do OpenAI aqui
-const OPENAI_API_KEY = "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";
+// 💡 Coloque sua API Key da OpenAI aqui
+const OPENAI_API_KEY = "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";
 
-app.get("/", (req, res) => {
-  res.send("Servidor funcionando 🚀");
-});
-
-// 🔐 Verificar premium
+// Rota para verificar usuário premium
 app.post("/check-premium", (req, res) => {
   const { email } = req.body;
-
-  if (users[email]) {
-    res.json({ premium: true });
-  } else {
-    res.json({ premium: false });
-  }
+  res.json({ premium: users[email] || false });
 });
 
-// 🔥 Rota de chat com ChatGPT
+// Rota de chat
 app.post("/chat", async (req, res) => {
   const { mensagem } = req.body;
 
@@ -68,6 +59,4 @@ app.post("/chat", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log("Servidor rodando na porta " + PORT);
-});
+app.listen(PORT, () => console.log("Servidor rodando na porta " + PORT));
