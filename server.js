@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import fetch from "node-fetch"; // necessário para usar fetch no Node.js
+import fetch from "node-fetch"; // necessário no Node
 
 const app = express();
 app.use(cors());
@@ -12,6 +12,9 @@ const PORT = process.env.PORT || 3000;
 let users = {
   "miqueiasluna713@gmail.com": true
 };
+
+// 💡 Adicione sua API Key do OpenAI aqui
+const OPENAI_API_KEY = "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";
 
 app.get("/", (req, res) => {
   res.send("Servidor funcionando 🚀");
@@ -28,31 +31,40 @@ app.post("/check-premium", (req, res) => {
   }
 });
 
-// 🔥 Rota de chat
+// 🔥 Rota de chat com ChatGPT
 app.post("/chat", async (req, res) => {
   const { mensagem } = req.body;
 
   try {
-    // Tenta DuckDuckGo primeiro
-    const response = await fetch(
-      `https://api.duckduckgo.com/?q=${encodeURIComponent(mensagem)}&format=json&no_html=1&skip_disambig=1`
-    );
-    const data = await response.json();
+    const resposta = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [
+          { role: "system", content: "Você é um assistente inteligente que responde de forma clara e educativa." },
+          { role: "user", content: mensagem }
+        ],
+        max_tokens: 200
+      })
+    });
 
-    let resposta = "";
+    const data = await resposta.json();
 
-    // Se DuckDuckGo não tiver AbstractText, usa fallback
-    if (data.AbstractText && data.AbstractText.trim() !== "") {
-      resposta = data.AbstractText;
-    } else {
-      resposta = `Não encontrei uma resposta exata, mas posso tentar explicar: "${mensagem}" é algo complexo, mas posso ajudar você a entender melhor!`;
+    let textResposta = "Não consegui gerar uma resposta.";
+
+    if (data.choices && data.choices.length > 0) {
+      textResposta = data.choices[0].message.content;
     }
 
-    res.json({ resposta });
+    res.json({ resposta: textResposta });
 
   } catch (error) {
     console.log(error);
-    res.json({ resposta: "Erro ao buscar resposta. Tente novamente." });
+    res.json({ resposta: "Erro ao gerar resposta da IA." });
   }
 });
 
