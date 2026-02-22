@@ -7,9 +7,9 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-// 👑 miqueiasluna713@gmail.com
+// 👑 "miqueiasluna713@gmail.com"
 let users = {
-  "seuemail@gmail.com": true
+  "miqueiasluna713@gmail.com": true
 };
 
 app.get("/", (req, res) => {
