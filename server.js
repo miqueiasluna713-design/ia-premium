@@ -7,11 +7,27 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
+// 👑 miqueiasluna713@gmail.com
+let users = {
+  "seuemail@gmail.com": true
+};
+
 app.get("/", (req, res) => {
   res.send("Servidor funcionando 🚀");
 });
 
-// 🔥 Nova rota de chat
+// 🔐 Verificar premium
+app.post("/check-premium", (req, res) => {
+  const { email } = req.body;
+
+  if (users[email]) {
+    res.json({ premium: true });
+  } else {
+    res.json({ premium: false });
+  }
+});
+
+// 🔥 Rota de chat
 app.post("/chat", async (req, res) => {
 
   const { mensagem } = req.body;
