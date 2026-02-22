@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import fetch from "node-fetch"; // necessário no Node
+import fetch from "node-fetch"; // necessário para usar fetch no Node
 
 const app = express();
 app.use(cors());
@@ -14,7 +14,7 @@ let users = {
 };
 
 // 💡 Adicione sua API Key do OpenAI aqui
-const OPENAI_API_KEY = "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";
+const OPENAI_API_KEY = "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";
 
 app.get("/", (req, res) => {
   res.send("Servidor funcionando 🚀");
