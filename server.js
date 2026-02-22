@@ -8,26 +8,20 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-// 👑 Usuário premium fixo (você)
+// Usuário premium fixo
 let users = {
   "miqueiasluna713@gmail.com": true
 };
 
-// 💡 Coloque sua API Key da OpenAI aqui
-const OPENAI_API_KEY = "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";
+// Coloque sua **chave da OpenAI aqui**
+const OPENAI_API_KEY = "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";
 
-// Rota para verificar usuário premium
-app.post("/check-premium", (req, res) => {
-  const { email } = req.body;
-  res.json({ premium: users[email] || false });
-});
-
-// Rota de chat
+// Rota chat
 app.post("/chat", async (req, res) => {
   const { mensagem } = req.body;
 
   try {
-    const resposta = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -43,19 +37,17 @@ app.post("/chat", async (req, res) => {
       })
     });
 
-    const data = await resposta.json();
-
-    let textResposta = "Não consegui gerar uma resposta.";
+    const data = await response.json();
 
     if (data.choices && data.choices.length > 0) {
-      textResposta = data.choices[0].message.content;
+      return res.json({ resposta: data.choices[0].message.content });
+    } else {
+      return res.json({ resposta: "Não consegui gerar uma resposta." });
     }
 
-    res.json({ resposta: textResposta });
-
   } catch (error) {
-    console.log(error);
-    res.json({ resposta: "Erro ao gerar resposta da IA." });
+    console.error(error);
+    return res.json({ resposta: "Erro ao gerar resposta da IA." });
   }
 });
 
